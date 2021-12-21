@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
-class UserController extends Controller
+class AuthController extends Controller
 {
     public function login(Request $request)
     {

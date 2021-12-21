@@ -41,7 +41,7 @@
             title-tag="h2"
             class="font-weight-bold mb-1"
           >
-            Welcome to Vuexy! 👋
+            Welcome to SID
           </b-card-title>
           <b-card-text class="mb-2">
             Please sign-in to your account and start the adventure
@@ -135,47 +135,6 @@
             </b-form>
           </validation-observer>
 
-          <b-card-text class="text-center mt-2">
-            <span>New on our platform? </span>
-            <b-link :to="{name:'page-auth-register-v2'}">
-              <span>&nbsp;Create an account</span>
-            </b-link>
-          </b-card-text>
-
-          <!-- divider -->
-          <div class="divider my-2">
-            <div class="divider-text">
-              or
-            </div>
-          </div>
-
-          <!-- social buttons -->
-          <div class="auth-footer-btn d-flex justify-content-center">
-            <b-button
-              variant="facebook"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="FacebookIcon" />
-            </b-button>
-            <b-button
-              variant="twitter"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="TwitterIcon" />
-            </b-button>
-            <b-button
-              variant="google"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="MailIcon" />
-            </b-button>
-            <b-button
-              variant="github"
-              href="javascript:void(0)"
-            >
-              <feather-icon icon="GithubIcon" />
-            </b-button>
-          </div>
         </b-col>
       </b-col>
     <!-- /Login-->
@@ -193,6 +152,7 @@ import {
 import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import store from '@/store/index'
+import useJwt from '@/auth/jwt/useJwt'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
@@ -241,17 +201,32 @@ export default {
   },
   methods: {
     validationForm() {
-      this.$refs.loginValidation.validate().then(success => {
-        if (success) {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Form Submitted',
-              icon: 'EditIcon',
-              variant: 'success',
-            },
-          })
-        }
+		this.$refs.loginValidation.validate().then(success => {
+        	if (success) {
+				this.$http.post('/auth/login', {
+					email: this.userEmail,
+					password: this.password
+				}).then(res => {
+					console.log(res);
+					if(res.data.status)
+					{
+						this.$toast({
+							component: ToastificationContent,
+							props: {
+								title: 'Login was successful',
+								icon: 'EditIcon',
+								variant: 'success',
+							},
+						})
+						useJwt.setToken(res.data.token)
+						this.$router.push('/')
+					}
+					else
+					{
+						this.$refs.loginValidation.setErrors(res.data.error)
+					}
+				})
+        	}
       })
     },
   },

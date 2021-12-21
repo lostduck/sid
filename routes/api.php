@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BeritaController;
 
@@ -16,8 +18,19 @@ use App\Http\Controllers\BeritaController;
 |
 */
 
-Route::post('register', [UserController::class, 'register']);
-Route::post('login', [UserController::class, 'login']);
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
+
+    Route::group(['middleware' => 'jwt.verify'], function() {
+      Route::get('logout', [AuthController::class, 'logout']);
+      Route::get('user', [AuthController::class, 'getAuthenticatedUser']);
+    });
+});
+
+// Route::post('register', [UserController::class, 'register']);
+// Route::post('login', [UserController::class, 'login']);
+
 Route::get('book', [BeritaController::class, 'book']);
 
 Route::get('bookall', [BeritaController::class, 'bookAuth'])->middleware('jwt.verify');
