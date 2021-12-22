@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMNewsTagTable extends Migration
+class UpdateNewsTableAddCategoryIdFk extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,9 @@ class CreateMNewsTagTable extends Migration
      */
     public function up()
     {
-        Schema::create('m_news_tag', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('slug');
-        });
+        Schema::table('news', function (Blueprint $table) {
+			$table->foreign('category_id')->references('id')->on('m_news_category');
+		});
     }
 
     /**
@@ -27,6 +25,6 @@ class CreateMNewsTagTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('m_news_tag');
+        $table->dropForeign('news_category_id_foreign');
     }
 }

@@ -58,6 +58,7 @@ const router = new VueRouter({
       component: () => import('@/views/Login.vue'),
       meta: {
         layout: 'full',
+		isAuthPage: true,
       },
     },
     {
@@ -83,6 +84,32 @@ router.afterEach(() => {
   if (appLoading) {
     appLoading.style.display = 'none'
   }
+})
+
+// New Imports
+import { canNavigate } from '@/libs/acl/routeProtection'
+import { isUserLoggedIn, getHomeRouteForLoggedInUser } from '@/auth/utils'
+
+// Router Before Each hook for route protection
+router.beforeEach((to, _, next) => {
+	if(!to.meta.isAuthPage) {
+		const isLoggedIn = isUserLoggedIn()
+
+		if (!canNavigate(to)) {
+		  // Redirect to login if not logged in
+		  // ! We updated login route name here from `auth-login` to `login` in starter-kit
+		  if (!isLoggedIn) return next({ name: 'login' })
+
+		  // If logged in => not authorized
+		  return next({ name: 'not-authorized' })
+		}
+
+		// Redirect if logged in
+		if (to.meta.redirectIfLoggedIn && isLoggedIn) {
+		  next(getHomeRouteForLoggedInUser())
+		}
+	}
+	return next()
 })
 
 export default router

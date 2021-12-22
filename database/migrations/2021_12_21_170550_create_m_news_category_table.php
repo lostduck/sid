@@ -15,6 +15,8 @@ class CreateMNewsCategoryTable extends Migration
     {
         Schema::create('m_news_category', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('slug');
             $table->timestamps();
         });
     }
