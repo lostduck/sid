@@ -22,45 +22,70 @@ const router = new VueRouter({
             active: true,
           },
         ],
-      },
-    },
-    {
-      path: '/second-page',
-      name: 'second-page',
-      component: () => import('@/views/SecondPage.vue'),
-      meta: {
-        pageTitle: 'Second Page',
-        breadcrumb: [
-          {
-            text: 'Second Page',
-            active: true,
-          },
-        ],
+		isPublicPage: true,
       },
     },
     {
       path: '/news',
-      name: 'news',
+      name: 'news-list',
       component: () => import('@/views/news/List.vue'),
       meta: {
-        pageTitle: 'Berita',
+        pageTitle: 'List Berita',
         breadcrumb: [
           {
             text: 'Berita',
+          },
+          {
+            text: 'List',
             active: true,
           },
         ],
 		resource: 'news',
     	action: 'list'
-      },
+      }
     },
+	  {
+		  path: '/news/add',
+		  component: () => import('@/views/news/Add.vue'),
+		  name: 'news-add',
+		  meta: {
+			  pageTitle: 'Tambah Berita',
+			  breadcrumb: [
+				  {
+					  text: 'Berita'
+				  },
+				  {
+					  text: 'Form',
+					  active: true,
+				  },
+			  ],
+			  resource: 'news',
+			  action: 'create'
+		  }
+	  },
+	  {
+		  path: '/news/edit/:id',
+		  component: () => import('@/views/news/Edit.vue'),
+		  name: 'news-edit',
+		  meta: {
+			  pageTitle: 'Edit Berita',
+			  breadcrumb: [
+				  {
+					  text: 'Berita',
+					  active: true,
+				  },
+			  ],
+			  resource: 'news',
+			  action: 'edit'
+		  }
+	  },
     {
       path: '/login',
       name: 'login',
       component: () => import('@/views/Login.vue'),
       meta: {
         layout: 'full',
-		isAuthPage: true,
+		isPublicPage: true,
       },
     },
     {
@@ -69,6 +94,7 @@ const router = new VueRouter({
       component: () => import('@/views/error/Error404.vue'),
       meta: {
         layout: 'full',
+		isPublicPage: true,
       },
     },
     {
@@ -94,7 +120,7 @@ import { isUserLoggedIn, getHomeRouteForLoggedInUser } from '@/auth/utils'
 
 // Router Before Each hook for route protection
 router.beforeEach((to, _, next) => {
-	if(!to.meta.isAuthPage) {
+	if (!to.meta.isPublicPage) {
 		const isLoggedIn = isUserLoggedIn()
 
 		if (!canNavigate(to)) {

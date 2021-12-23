@@ -1,5 +1,16 @@
 <template>
-  <b-card-code title="Basic Table">
+<b-row>
+    <b-col cols="12">
+		<div class="text-right">
+		<b-button
+			variant="primary"
+			to="/news/add"
+		>
+		Tambah Berita
+		</b-button>
+
+		</div>
+  <b-card-code title="" class="mt-2">
 
     <!-- search input -->
     <div class="custom-search d-flex justify-content-end">
@@ -45,14 +56,14 @@
 
         <!-- Column: Name -->
         <span
-          v-if="props.column.field === 'fullName'"
+          v-if="props.column.field === 'title'"
           class="text-nowrap"
         >
           <b-avatar
             :src="props.row.avatar"
             class="mx-1"
           />
-          <span class="text-nowrap">{{ props.row.fullName }}</span>
+          <span class="text-nowrap">{{ props.row.title }}</span>
         </span>
 
         <!-- Column: Status -->
@@ -113,7 +124,7 @@
             </span>
             <b-form-select
               v-model="pageLength"
-              :options="['3','5','10']"
+              :options="['5','10','15','25']"
               class="mx-1"
               @input="(value)=>props.perPageChanged({currentPerPage:value})"
             />
@@ -149,16 +160,22 @@
         </div>
       </template>
     </vue-good-table>
+	<template #code>
+      {{ codeBasic }}
+    </template>
   </b-card-code>
+   </b-col>
+  </b-row>
 </template>
 
 <script>
 import BCardCode from '@core/components/b-card-code/BCardCode.vue'
 import {
-  BAvatar, BBadge, BPagination, BFormGroup, BFormInput, BFormSelect, BDropdown, BDropdownItem,
+  BAvatar, BBadge, BPagination, BFormGroup, BFormInput, BFormSelect, BDropdown, BDropdownItem, BRow, BCol, BButton
 } from 'bootstrap-vue'
 import { VueGoodTable } from 'vue-good-table'
 import store from '@/store/index'
+import { codeBasic } from './code'
 
 export default {
   components: {
@@ -172,28 +189,31 @@ export default {
     BFormSelect,
     BDropdown,
     BDropdownItem,
+	BRow,
+	BCol,
+	BButton
   },
   data() {
     return {
-      pageLength: 3,
+      pageLength: 15,
       dir: false,
-      codeBasic,
+	  codeBasic,
       columns: [
         {
-          label: 'Name',
-          field: 'fullName',
+          label: 'Judul Berita',
+          field: 'title',
         },
         {
-          label: 'Email',
-          field: 'email',
+          label: 'Kategori',
+          field: 'category_id',
         },
         {
           label: 'Date',
-          field: 'startDate',
+          field: 'created_at',
         },
         {
-          label: 'Salary',
-          field: 'salary',
+          label: 'Slug',
+          field: 'slug',
         },
         {
           label: 'Status',
@@ -248,8 +268,12 @@ export default {
     },
   },
   created() {
-    this.$http.get('/good-table/basic')
-      .then(res => { this.rows = res.data })
+    this.$http.get('/news/list')
+      .then(res => { this.rows = res.data.news.data })
   },
 }
 </script>
+
+<style lang="scss" >
+@import '~@core/scss/vue/libs/vue-good-table.scss';
+</style>

@@ -4,8 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\BeritaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +21,7 @@ use App\Http\Controllers\BeritaController;
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
+	Route::post('refresh', [AuthController::class, 'refresh']);
 
     Route::group(['middleware' => 'jwt.verify'], function() {
       Route::get('logout', [AuthController::class, 'logout']);
@@ -28,10 +29,9 @@ Route::group(['prefix' => 'auth'], function () {
     });
 });
 
-// Route::post('register', [UserController::class, 'register']);
-// Route::post('login', [UserController::class, 'login']);
-
-Route::get('book', [BeritaController::class, 'book']);
-
-Route::get('bookall', [BeritaController::class, 'bookAuth'])->middleware('jwt.verify');
-Route::get('user', [UserController::class, 'getAuthenticatedUser'])->middleware('jwt.verify');
+Route::group(['prefix' => 'news'], function () {
+	Route::group(['middleware' => 'jwt.verify'], function () {
+		Route::get('list', [NewsController::class, 'getList']);
+		Route::get('detail/{id}', [NewsController::class, 'getDetail']);
+	});
+});

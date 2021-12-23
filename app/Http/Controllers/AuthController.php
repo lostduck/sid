@@ -81,6 +81,15 @@ class AuthController extends Controller
         return response()->json(compact('user','token'),201);
     }
 
+	public function refresh()
+	{
+		// Remake token rather than just refresh expire time
+		$payload = JWTAuth::parseToken()->refresh();
+
+		// all good so return the token
+		return response()->json(['accessToken' => (string) $payload]);
+	}
+
     public function getAuthenticatedUser()
     {
         try {
