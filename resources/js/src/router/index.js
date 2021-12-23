@@ -50,6 +50,8 @@ const router = new VueRouter({
             active: true,
           },
         ],
+		resource: 'news',
+    	action: 'list'
       },
     },
     {

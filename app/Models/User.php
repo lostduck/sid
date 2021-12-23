@@ -34,6 +34,10 @@ class User extends Authenticatable implements JWTSubject
         'remember_token',
     ];
 
+	protected $appends = [
+		'permission'
+	];
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -42,6 +46,11 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+	public function getPermissionAttribute()
+	{
+		return $this->getAllPermissions();
+	}
 
 	public function getJWTIdentifier()
     {

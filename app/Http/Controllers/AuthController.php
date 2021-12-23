@@ -29,8 +29,31 @@ class AuthController extends Controller
 			], 500);
         }
 
+		$user = User::where('email', $request->email)->first();
+
+		$returnDataUser = [
+			'address' => $user->address,
+			'birthdate' => $user->birthdate,
+			'department_id' => $user->department_id,
+			'email' => $user->email,
+			'employee_code' => $user->employee_code,
+			'name' => $user->name,
+			'phone' => $user->phone
+		];
+
+		foreach ($user->permission as $p) {
+			$nameArr = explode('-', $p->name);
+			$subject = $nameArr[0];
+			$action = $nameArr[1];
+			$returnDataUser['ability'][] = [
+				'action' => $action,
+				'subject' => $subject
+			];
+		}
+
         return response()->json([
 			'status'	=> TRUE,
+			'userData'		=> $returnDataUser,
 			'token'		=> $token
 		], 200);
     }

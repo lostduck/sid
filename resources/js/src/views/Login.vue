@@ -219,6 +219,7 @@ export default {
 							},
 						})
 						useJwt.setToken(res.data.token)
+						localStorage.setItem('userData', JSON.stringify(res.data.userData))
 						this.$router.push('/')
 					}
 					else
